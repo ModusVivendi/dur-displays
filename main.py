@@ -11,7 +11,7 @@ from subprocess import Popen, PIPE
 def arp_display(pkt):
   if pkt[ARP].op == 1: #who-has (request)
     if pkt[ARP].psrc == '0.0.0.0': # ARP Probe
-      if pkt[ARP].hwsrc == '74:75:48:5f:99:30': # Button 1
+      if pkt[ARP].hwsrc == 'a0:1d:48:75:2b:8c': # Button 1
         print('Pushed Button 1')
         OpenFile('test.txt')
       elif pkt[ARP].hwsrc == '10:ae:60:00:4d:f3': # Button 2
@@ -31,42 +31,41 @@ def OpenFile(file):
 	if sys.platform == 'linux2':
 		keypress(AltEnterLinux)
 	else:
-		AltEnter()
-
-
 # ====Windows begin building ctypes functions====
-SendInput = ctypes.windll.user32.SendInput
+		SendInput = ctypes.windll.user32.SendInput
 
-# C struct redefinitions 
-PUL = ctypes.POINTER(ctypes.c_ulong)
-class KeyBdInput(ctypes.Structure):
-    _fields_ = [("wVk", ctypes.c_ushort),
-                ("wScan", ctypes.c_ushort),
-                ("dwFlags", ctypes.c_ulong),
-                ("time", ctypes.c_ulong),
-                ("dwExtraInfo", PUL)]
+		# C struct redefinitions 
+		PUL = ctypes.POINTER(ctypes.c_ulong)
+		class KeyBdInput(ctypes.Structure):
+		    _fields_ = [("wVk", ctypes.c_ushort),
+		                ("wScan", ctypes.c_ushort),
+		                ("dwFlags", ctypes.c_ulong),
+		                ("time", ctypes.c_ulong),
+		                ("dwExtraInfo", PUL)]
 
-class HardwareInput(ctypes.Structure):
-    _fields_ = [("uMsg", ctypes.c_ulong),
-                ("wParamL", ctypes.c_short),
-                ("wParamH", ctypes.c_ushort)]
+		class HardwareInput(ctypes.Structure):
+		    _fields_ = [("uMsg", ctypes.c_ulong),
+		                ("wParamL", ctypes.c_short),
+		                ("wParamH", ctypes.c_ushort)]
 
-class MouseInput(ctypes.Structure):
-    _fields_ = [("dx", ctypes.c_long),
-                ("dy", ctypes.c_long),
-                ("mouseData", ctypes.c_ulong),
-                ("dwFlags", ctypes.c_ulong),
-                ("time",ctypes.c_ulong),
-                ("dwExtraInfo", PUL)]
+		class MouseInput(ctypes.Structure):
+		    _fields_ = [("dx", ctypes.c_long),
+		                ("dy", ctypes.c_long),
+		                ("mouseData", ctypes.c_ulong),
+		                ("dwFlags", ctypes.c_ulong),
+		                ("time",ctypes.c_ulong),
+		                ("dwExtraInfo", PUL)]
 
-class Input_I(ctypes.Union):
-    _fields_ = [("ki", KeyBdInput),
-                 ("mi", MouseInput),
-                 ("hi", HardwareInput)]
+		class Input_I(ctypes.Union):
+		    _fields_ = [("ki", KeyBdInput),
+		                 ("mi", MouseInput),
+		                 ("hi", HardwareInput)]
 
-class Input(ctypes.Structure):
-    _fields_ = [("type", ctypes.c_ulong),
-                ("ii", Input_I)]
+		class Input(ctypes.Structure):
+		    _fields_ = [("type", ctypes.c_ulong),
+		                ("ii", Input_I)]
+
+		AltEnter()
 
 # Actual Functions
 
@@ -115,7 +114,7 @@ def keypress(sequence):
     p.communicate(input=sequence)
 
 if __name__ =="__main__":
-	print(sniff(prn=arp_display, filter="arp", store=0, count=10))
+	print(sniff(prn=arp_display, filter='arp', store=0, count=0))
 
 
 
