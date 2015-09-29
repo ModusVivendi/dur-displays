@@ -9,16 +9,17 @@ from subprocess import Popen, PIPE
 
 # Use scapy to listen for specific mac address connections
 def arp_display(pkt):
-  if pkt[ARP].op == 1: #who-has (request)
-    if pkt[ARP].psrc == '0.0.0.0': # ARP Probe
-      if pkt[ARP].hwsrc == 'a0:1d:48:75:2b:8c': # Button 1
-        print('Pushed Button 1')
-        OpenFile('test.txt')
-      elif pkt[ARP].hwsrc == '10:ae:60:00:4d:f3': # Button 2
-        print('Pushed Button 2')
-        OpenFile(file2)
-      else:
-        print('ARP Probe from unknown device: ' + pkt[ARP].hwsrc)
+	if pkt.haslayer(ARP):
+		if pkt[ARP].op == 1: #who-has (request)
+			if pkt[ARP].psrc == '0.0.0.0': # ARP Probe
+				if pkt[ARP].hwsrc == 'a0:1d:48:75:2b:8c': # Button 1
+					print('Pushed Button 1')
+					OpenFile('test.txt')
+				elif pkt[ARP].hwsrc == '10:ae:60:00:4d:f3': # Button 2
+					print('Pushed Button 2')
+					OpenFile(file2)
+				else:
+					print('ARP Probe from unknown device: ' + pkt[ARP].hwsrc)
 
 # Opens program on windows and go fullscreen
 def OpenFile(file):
