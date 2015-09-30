@@ -7,6 +7,7 @@ from configobj import ConfigObj
 from subprocess import Popen, PIPE
 import sys
 import win32gui #http://sourceforge.net/projects/pywinauto/
+from apscheduler.schedulers.blocking import BlockingScheduler
 
 # apt-get install xautomation required for linux
 
@@ -41,6 +42,8 @@ def CheckEmail():
 		print(message['subject'])
 		if message['subject'] == message_subject:
 			OpenFile(open_file)
+		elif message['subject'] == message_subject_off:
+			CloseFile()
 	pop_conn.quit()
 
 # Opens program on windows and go fullscreen
@@ -162,4 +165,13 @@ if __name__ =="__main__":
 		    _fields_ = [("type", ctypes.c_ulong),
 		                ("ii", Input_I)]
 
-	CheckEmail()
+
+	#Initialize scheduler
+	scheduler = BlockingScheduler()
+
+	scheduler.add_job(CheckEmail, 'interval', seconds=15)
+
+	try:
+		scheduler.start()
+	except (KeyboardInterrupt, SystemExit):
+		pass
