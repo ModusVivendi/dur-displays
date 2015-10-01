@@ -6,9 +6,12 @@ from configobj import ConfigObj
 #from scapy.all import *
 from subprocess import Popen, PIPE
 import sys
-import win32gui #http://sourceforge.net/projects/pywinauto/
+import win32gui #http://sourceforge.net/projects/pywinauto/ via easy_install
 import win32con
+import logging
 from apscheduler.schedulers.blocking import BlockingScheduler
+import poplib
+from email import parser
 
 # apt-get install xautomation required for linux
 
@@ -26,8 +29,6 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 #				else:
 #					print('ARP Probe from unknown device: ' + pkt[ARP].hwsrc)
 
-import poplib
-from email import parser
 
 def CheckEmail():
 	pop_conn = poplib.POP3_SSL(pop_server)
@@ -45,35 +46,15 @@ def CheckEmail():
 			OpenFile(open_file)
 		elif message['subject'] == message_subject_off:
 			CloseFile(open_file)
+			os.startfile('turnoff.exe')
 	pop_conn.quit()
 
+
 # Opens program on windows and go fullscreen
+
 def OpenFile(file):
-	# Linux
-	if sys.platform == 'linux2':
-		subprocess.call(["xdg-open", file])
-	# Windows
-	else:
-		os.startfile(os.path.normpath(file))
-		time.sleep(5)
-		toplist = []
-		winlist = []
-		def enum_callback(hwnd, results):
-			winlist.append((hwnd, win32gui.GetWindowText(hwnd)))
-		win32gui.EnumWindows(enum_callback, toplist)
-		app = [(hwnd, title) for hwnd, title in winlist if str(app_title_bar) in title.lower()]
-		# just grab the first window that matches
-		app = app[0]
-		# use the window handle to set focus
-		win32gui.SetForegroundWindow(app[0])
-
-	#Key press to go fullscreen
-	if sys.platform == 'linux2':
-		keypress(AltEnterLinux)
-	else:
-		AltEnter()
-
-def CloseFile(file):
+	os.startfile(os.path.normpath(file))
+	time.sleep(5)
 	toplist = []
 	winlist = []
 	def enum_callback(hwnd, results):
@@ -83,7 +64,24 @@ def CloseFile(file):
 	# just grab the first window that matches
 	app = app[0]
 	# use the window handle to set focus
-	win32gui.PostMessage(app[0], win32con.WM_CLOSE,0,0)
+	win32gui.SetForegroundWindow(app[0])
+
+	#Key press to go fullscreen
+	AltEnter()
+
+
+def CloseFile(file):
+	toplist = []
+	winlist = []
+	def enum_callback(hwnd, results):
+		winlist.append((hwnd, win32gui.GetWindowText(hwnd)))
+	win32gui.EnumWindows(enum_callback, toplist)
+	app = [(hwnd, title) for hwnd, title in winlist if str(app_title_bar) in title.lower()]
+	# just grab the first window that matches
+	if len(app) > 0:
+		app = app[0]
+		# use the window handle to set focus
+		win32gui.PostMessage(app[0], win32con.WM_CLOSE,0,0)
 
 # Actual key press functions
 
@@ -104,7 +102,6 @@ def ReleaseKey(hexKeyCode):
     SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
 
 # Windows key codes available at: http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731%28v=vs.85%29.aspx
-
 # Combo presses
 
 def AltEnter():
@@ -119,17 +116,6 @@ def AltEnter():
     time.sleep(1)       
     ReleaseKey(0x012) #~Alt
 
-# ====Begin building debian-based xautomation keypresses
-
-def AltEnterLinux():
-	'''keydown Alt_L
-	key Enter
-	keyup Alt_L
-	'''
-
-def keypress(sequence):
-    p = Popen(['xte'], stdin=PIPE)
-    p.communicate(input=sequence)
 
 if __name__ =="__main__":
 	#print(sniff(prn=arp_display, filter='arp', store=0, count=0))
@@ -146,43 +132,43 @@ if __name__ =="__main__":
 	app_title_bar = config['app_title_bar'].lower() # Name of application that will be running your file
 
 	# ====Windows begin building ctypes functions====
-	if not sys.platform == 'linux2':
 
-		SendInput = ctypes.windll.user32.SendInput
+	SendInput = ctypes.windll.user32.SendInput
 
-		# C struct redefinitions 
-		PUL = ctypes.POINTER(ctypes.c_ulong)
-		class KeyBdInput(ctypes.Structure):
-		    _fields_ = [("wVk", ctypes.c_ushort),
-		                ("wScan", ctypes.c_ushort),
-		                ("dwFlags", ctypes.c_ulong),
-		                ("time", ctypes.c_ulong),
-		                ("dwExtraInfo", PUL)]
+	# C struct redefinitions 
+	PUL = ctypes.POINTER(ctypes.c_ulong)
+	class KeyBdInput(ctypes.Structure):
+	    _fields_ = [("wVk", ctypes.c_ushort),
+	                ("wScan", ctypes.c_ushort),
+	                ("dwFlags", ctypes.c_ulong),
+	                ("time", ctypes.c_ulong),
+	                ("dwExtraInfo", PUL)]
 
-		class HardwareInput(ctypes.Structure):
-		    _fields_ = [("uMsg", ctypes.c_ulong),
-		                ("wParamL", ctypes.c_short),
-		                ("wParamH", ctypes.c_ushort)]
+	class HardwareInput(ctypes.Structure):
+	    _fields_ = [("uMsg", ctypes.c_ulong),
+	                ("wParamL", ctypes.c_short),
+	                ("wParamH", ctypes.c_ushort)]
 
-		class MouseInput(ctypes.Structure):
-		    _fields_ = [("dx", ctypes.c_long),
-		                ("dy", ctypes.c_long),
-		                ("mouseData", ctypes.c_ulong),
-		                ("dwFlags", ctypes.c_ulong),
-		                ("time",ctypes.c_ulong),
-		                ("dwExtraInfo", PUL)]
+	class MouseInput(ctypes.Structure):
+	    _fields_ = [("dx", ctypes.c_long),
+	                ("dy", ctypes.c_long),
+	                ("mouseData", ctypes.c_ulong),
+	                ("dwFlags", ctypes.c_ulong),
+	                ("time",ctypes.c_ulong),
+	                ("dwExtraInfo", PUL)]
 
-		class Input_I(ctypes.Union):
-		    _fields_ = [("ki", KeyBdInput),
-		                 ("mi", MouseInput),
-		                 ("hi", HardwareInput)]
+	class Input_I(ctypes.Union):
+	    _fields_ = [("ki", KeyBdInput),
+	                 ("mi", MouseInput),
+	                 ("hi", HardwareInput)]
 
-		class Input(ctypes.Structure):
-		    _fields_ = [("type", ctypes.c_ulong),
-		                ("ii", Input_I)]
+	class Input(ctypes.Structure):
+	    _fields_ = [("type", ctypes.c_ulong),
+	                ("ii", Input_I)]
 
 
 	#Initialize scheduler
+	logging.basicConfig()
 	scheduler = BlockingScheduler()
 
 	scheduler.add_job(CheckEmail, 'interval', seconds=15)
