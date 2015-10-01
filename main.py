@@ -7,6 +7,7 @@ from configobj import ConfigObj
 from subprocess import Popen, PIPE
 import sys
 import win32gui #http://sourceforge.net/projects/pywinauto/
+import win32con
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 # apt-get install xautomation required for linux
@@ -40,18 +41,20 @@ def CheckEmail():
 	messages = [parser.Parser().parsestr(mssg.decode('utf-8')) for mssg in messages]
 	for message in messages:
 		print(message['subject'])
-		if message['subject'] == message_subject:
+		if message['subject'] == message_subject_on:
 			OpenFile(open_file)
 		elif message['subject'] == message_subject_off:
-			CloseFile()
+			CloseFile(open_file)
 	pop_conn.quit()
 
 # Opens program on windows and go fullscreen
 def OpenFile(file):
+	# Linux
 	if sys.platform == 'linux2':
 		subprocess.call(["xdg-open", file])
+	# Windows
 	else:
-		os.startfile(file)
+		os.startfile(os.path.normpath(file))
 		time.sleep(5)
 		toplist = []
 		winlist = []
@@ -70,7 +73,19 @@ def OpenFile(file):
 	else:
 		AltEnter()
 
-# Actual Functions
+def CloseFile(file):
+	toplist = []
+	winlist = []
+	def enum_callback(hwnd, results):
+		winlist.append((hwnd, win32gui.GetWindowText(hwnd)))
+	win32gui.EnumWindows(enum_callback, toplist)
+	app = [(hwnd, title) for hwnd, title in winlist if str(app_title_bar) in title.lower()]
+	# just grab the first window that matches
+	app = app[0]
+	# use the window handle to set focus
+	win32gui.PostMessage(app[0], win32con.WM_CLOSE,0,0)
+
+# Actual key press functions
 
 def PressKey(hexKeyCode):
 
@@ -125,9 +140,10 @@ if __name__ =="__main__":
 	pop_user = config['pop_user']
 	pop_password = config['pop_password']
 
-	message_subject = raw_input('What e-mail message subject will trigger this script?: ')
-	open_file = raw_input('What is the path of the file you would like to open?: ')
-	app_title_bar = raw_input('What is the name of the default program that opens your file?: ').lower()
+	message_subject_on = config['message_subject_on']
+	message_subject_off = config['message_subject_off']
+	open_file = config['open_file']
+	app_title_bar = config['app_title_bar'].lower() # Name of application that will be running your file
 
 	# ====Windows begin building ctypes functions====
 	if not sys.platform == 'linux2':
