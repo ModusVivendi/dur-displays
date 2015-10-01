@@ -1,5 +1,0 @@
-language: python
-python:
-  - "2.7"
-install: "pip install requests && pip install --allow-external ctypes && pip install configobj && easy_install pywinauto && pip install apscheduler"
-script: python -m py_compile main.py
