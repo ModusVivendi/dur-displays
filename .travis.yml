@@ -1,5 +1,5 @@
 language: python
 python:
   - "2.7"
-install: "pip install requests && pip install --allow-external ctypes && pip install configobj && pip install _winreg && pip install pywinauto && pip install apscheduler"
+install: "pip install requests && pip install --allow-external ctypes && pip install configobj && pip install winreg && pip install pywinauto && pip install apscheduler"
 script: python -m py_compile main.py
