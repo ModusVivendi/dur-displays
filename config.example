@@ -1,3 +1,8 @@
 'pop_server' = 'pop.gmail.com'
 'pop_user' = 'user'
 'pop_password' = 'pass'
+'message_subject_on' = ''
+'message_subject_off' = ''
+'message_subject_fullscreen' = ''
+'open_file' = 'C:\Users\user\file.mov'
+'app_title_bar' = 'file.mov'

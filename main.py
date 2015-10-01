@@ -47,27 +47,38 @@ def CheckEmail():
 		elif message['subject'] == message_subject_off:
 			CloseFile(open_file)
 			os.startfile('turnoff.exe')
+		elif message['subject'] == message_subject_fullscreen:
+			AltEnter()
 	pop_conn.quit()
 
 
 # Opens program on windows and go fullscreen
 
 def OpenFile(file):
-	os.startfile(os.path.normpath(file))
-	time.sleep(5)
 	toplist = []
 	winlist = []
 	def enum_callback(hwnd, results):
 		winlist.append((hwnd, win32gui.GetWindowText(hwnd)))
 	win32gui.EnumWindows(enum_callback, toplist)
 	app = [(hwnd, title) for hwnd, title in winlist if str(app_title_bar) in title.lower()]
-	# just grab the first window that matches
-	app = app[0]
-	# use the window handle to set focus
-	win32gui.SetForegroundWindow(app[0])
+	if len(app) == 0:
+		os.startfile(os.path.normpath(file))
+		time.sleep(5)
+		win32gui.EnumWindows(enum_callback, toplist)
+		app = [(hwnd, title) for hwnd, title in winlist if str(app_title_bar) in title.lower()]
+		# just grab the first window that matches
+		app = app[0]
+		# use the window handle to set focus
+		win32gui.SetForegroundWindow(app[0])
 
-	#Key press to go fullscreen
-	AltEnter()
+		#Key press to go fullscreen
+		AltEnter()
+	else:
+		# just grab the first window that matches
+		app = app[0]
+		# use the window handle to set focus
+		win32gui.SetForegroundWindow(app[0])
+
 
 
 def CloseFile(file):
@@ -128,6 +139,7 @@ if __name__ =="__main__":
 
 	message_subject_on = config['message_subject_on']
 	message_subject_off = config['message_subject_off']
+	message_subject_fullscreen = config['message_subject_fullscreen']
 	open_file = config['open_file']
 	app_title_bar = config['app_title_bar'].lower() # Name of application that will be running your file
 
