@@ -78,6 +78,7 @@ def OpenFile(file):
 		app = app[0]
 		# use the window handle to set focus
 		win32gui.SetForegroundWindow(app[0])
+		AltEnter()
 
 
 

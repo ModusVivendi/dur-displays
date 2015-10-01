@@ -1,2 +1,5 @@
 Media Player Classic.lnk
 setuptools-1.4.2.tar.gz
+build/*
+dist/*
+setup.py
