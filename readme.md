@@ -1,7 +1,7 @@
 # Digital Display Script
 Checks an e-mail inbox for messages containing a specific subject line, and opens specified program or file in fullscreen.
 
-[![Build Status](https://travis-ci.org/ModusVivendi/dur-displays.svg?branch=master)](https://travis-ci.org/ModusVivendi/twitter-contest)
+[![Build Status](https://travis-ci.org/ModusVivendi/dur-displays.svg?branch=master)](https://travis-ci.org/ModusVivendi/dur-displays)
 
 License
 ------------
