@@ -46,7 +46,7 @@ def CheckEmail():
 			OpenFile(open_file)
 		elif message['subject'] == message_subject_off:
 			CloseFile(open_file)
-			os.startfile('turnoff.exe')
+			TurnoffMonitor()
 		elif message['subject'] == message_subject_fullscreen:
 			AltEnter()
 	pop_conn.quit()
@@ -94,6 +94,11 @@ def CloseFile(file):
 		app = app[0]
 		# use the window handle to set focus
 		win32gui.PostMessage(app[0], win32con.WM_CLOSE,0,0)
+
+
+def TurnoffMonitor():
+	SC_MONITORPOWER = 0xF170
+	win32gui.SendMessage(win32con.HWND_BROADCAST, win32con.WM_SYSCOMMAND, SC_MONITORPOWER, 2)
 
 # Actual key press functions
 
