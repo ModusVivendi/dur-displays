@@ -1,8 +1,8 @@
 'pop_server' = 'pop.gmail.com'
 'pop_user' = 'user'
 'pop_password' = 'pass'
-'message_subject_on' = ''
-'message_subject_off' = ''
-'message_subject_fullscreen' = ''
+'message_subject_on' = 'Start Video'
+'message_subject_off' = 'Stop Video'
+'message_subject_fullscreen' = 'Video Fullscreen'
 'open_file' = 'C:\Users\user\file.mov'
-'app_title_bar' = 'file.mov'
+'app_title_bar' = 'file.mov' # This is what shows up in the window's title bar.  It may be either the name of the file, the path to the file, or the application name, depending on the default app that opens your file.

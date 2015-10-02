@@ -6,7 +6,7 @@ Yes, there are dedicated digital display and signage applications that do this b
 License
 ------------
 
-You can fork this repository on GitHub as long as it links back to this original repository. Do not sell this script as I would like the code to remain free.
+You can fork this repository on GitHub as long as it links back to this original repository. Do not sell this script.
 
 Prerequisites
 ------------
@@ -15,14 +15,19 @@ Prerequisites
   
 Configuration
 ------------
+Rename 'config.example' to 'config'.
 
-Open up `config` and make the values correspond to your POP compatible e-mail server, username, and password.  gmail is recommended.  
+Open up `config` and make the values correspond to your POP compatible e-mail server, username, and password.  gmail is recommended.
+
+The message fields should contain the commands you wish to put in your e-mail subject line to trigger the respective on, off, and fullscreen actions.
 
 Installation
 ------------
+Use virtualenv, please.
+
 From the command line:
 
-	"pip install requests && pip install ctypes && pip install configobj && pip install pywinauto && pip install apscheduler"
+	pip install requests && pip install configobj && pip install pywinauto && pip install apscheduler
 	
 Then run:
 
