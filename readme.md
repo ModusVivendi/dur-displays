@@ -12,23 +12,26 @@ Prerequisites
 ------------
 
   * Windows - Python 2.7
-  
-Configuration
-------------
-Rename 'config.example' to 'config'.
-
-Open up `config` and make the values correspond to your POP compatible e-mail server, username, and password.  gmail is recommended.
-
-The message fields should contain the commands you wish to put in your e-mail subject line to trigger the respective on, off, and fullscreen actions.
 
 Installation
 ------------
 Use virtualenv, please.
 
+Clone or download this repository.
+
 From the command line:
 
-	pip install requests && pip install configobj && pip install pywinauto && pip install apscheduler
+	pip install -r requirements.txt
 	
 Then run:
 
 	python main.py
+
+Configuration
+------------
+Rename 'config.example' to 'config'.
+
+Open up `config` and make the values correspond to your POP compatible e-mail server, username, and password.  Gmail is recommended.
+
+The message fields should contain the commands you wish to put in your e-mail subject line to trigger the respective on, off, and fullscreen actions.
+
