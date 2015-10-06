@@ -63,7 +63,7 @@ def OpenFile(file):
 	app = [(hwnd, title) for hwnd, title in winlist if str(app_title_bar) in title.lower()]
 	if len(app) == 0:
 		os.startfile(os.path.normpath(file))
-		time.sleep(5)
+		time.sleep(10)
 		win32gui.EnumWindows(enum_callback, toplist)
 		app = [(hwnd, title) for hwnd, title in winlist if str(app_title_bar) in title.lower()]
 		# just grab the first window that matches
